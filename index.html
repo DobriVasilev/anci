@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>For Anci</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:#ebe5db;
+  color:#2a2725;
+  font-family:'Snell Roundhand','Apple Chancery',cursive;
+  font-size:22px;line-height:1.7;overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+#petals{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:100}
+
+/* ===== LAYOUT ===== */
+.page{max-width:700px;margin:0 auto;padding:0 20px}
+
+/* ===== HERO ===== */
+.hero{position:relative;width:100%;height:100vh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer}
+.hero-title{font-size:clamp(56px,14vw,120px);color:#2a2725;
+  opacity:0;transform:translateY(24px);animation:fadeUp 2.5s cubic-bezier(.23,1,.32,1) forwards 0.3s}
+.hero-sub{font-size:clamp(16px,2.5vw,20px);color:#6a6460;
+  margin-top:16px;font-family:Palatino,Georgia,serif;font-style:italic;letter-spacing:0.08em;
+  opacity:0;animation:fadeUp 2s cubic-bezier(.23,1,.32,1) forwards 1s}
+.hero-prompt{position:absolute;bottom:48px;font-size:18px;color:#9a9490;
+  opacity:0;animation:fadeUp 2s ease forwards 1.8s}
+.hero-prompt.started{animation:breathe 3s ease-in-out infinite}
+@keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
+@keyframes breathe{0%,100%{opacity:0.3}50%{opacity:0.7}}
+
+/* ===== SCROLL QUOTES ===== */
+.quotes-stage{position:relative;width:100%;height:100vh;overflow:hidden}
+.quote-item{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(0.7);
+  opacity:0;text-align:center;max-width:90vw;width:700px;
+  font-size:clamp(24px,4.5vw,38px);line-height:1.5;color:#2a2725;will-change:transform,opacity}
+.quote-item.long{font-size:clamp(20px,3.5vw,30px);width:750px}
+.quote-from{display:block;font-size:15px;color:#8a8480;margin-top:14px;
+  font-family:Palatino,Georgia,serif;font-style:italic}
+
+/* ===== THE LETTER — 3D parchment with spotlight ===== */
+.letter-wrap{padding:8vh 0;perspective:1000px;perspective-origin:50% 40%}
+.letter-scene{position:relative}
+
+/* Spotlight glow behind the letter */
+.letter-spotlight{
+  position:absolute;top:-60px;left:50%;transform:translateX(-50%);
+  width:500px;height:500px;
+  background:radial-gradient(ellipse 60% 50% at 50% 30%,rgba(255,240,210,0.15) 0%,rgba(255,230,180,0.06) 40%,transparent 70%);
+  pointer-events:none;z-index:0;
+}
+
+.letter-card{
+  position:relative;z-index:1;
+  background:
+    url('notebook-ref.png') center/cover no-repeat;
+  border-radius:3px;
+  overflow:hidden;
+  box-shadow:
+    0 4px 8px rgba(0,0,0,0.08),
+    0 12px 32px rgba(0,0,0,0.12),
+    0 24px 64px rgba(0,0,0,0.08);
+  transform:rotateX(3deg) rotateY(-1.5deg) rotateZ(0.3deg);
+  transform-style:preserve-3d;
+  transition:opacity 1.2s cubic-bezier(.23,1,.32,1),transform 0.5s cubic-bezier(.23,1,.32,1);
+  opacity:0;
+}
+.letter-card.visible{
+  opacity:1;
+  animation:letterHover 8s ease-in-out infinite;
+}
+@keyframes letterHover{
+  0%,100%{transform:rotateX(3deg) rotateY(-1.5deg) rotateZ(0.3deg) translateY(0)}
+  50%{transform:rotateX(2deg) rotateY(-0.5deg) rotateZ(0.1deg) translateY(-8px)}
+}
+
+/* Inner overlay: washes out original text, keeps edge decorations visible */
+.letter-inner{
+  background:
+    radial-gradient(ellipse 82% 85% at 40% 48%,rgba(248,243,234,0.94) 0%,rgba(248,243,234,0.88) 50%,rgba(248,243,234,0.5) 78%,transparent 100%);
+  padding:clamp(40px,6vw,64px) clamp(36px,5vw,56px) clamp(40px,6vw,64px) clamp(40px,5vw,60px);
+  min-height:600px;
+  position:relative;
+}
+
+/* Paper edge thickness (3D) */
+.letter-card::after{
+  content:'';position:absolute;
+  top:4px;right:-5px;bottom:-5px;left:4px;
+  background:linear-gradient(180deg,#e8dfd2,#e0d6c8);
+  border-radius:2px;z-index:-1;
+  transform:translateZ(-8px);
+  border:1px solid rgba(0,0,0,0.05);
+}
+
+.letter-label{font-family:Palatino,Georgia,serif;font-style:italic;font-size:16px;
+  letter-spacing:0.1em;color:#7a7470;margin-bottom:6px}
+.letter-title{font-size:clamp(38px,7vw,58px);color:#2a2725;margin-bottom:0.6em;line-height:1.2}
+.letter-body{font-size:clamp(22px,3.5vw,28px);line-height:2.1;color:#3a3530}
+.letter-body p{margin-bottom:0.8em}
+.letter-sign{text-align:right;margin-top:1.5em;padding-top:1em;
+  border-top:1px solid rgba(0,0,0,0.06)}
+.letter-sign .love{font-size:clamp(28px,5vw,40px);display:block}
+.letter-sign .bunny{font-size:clamp(22px,3.5vw,30px);color:#8a7560;display:block;margin-top:4px}
+.letter-sign .from-line{font-size:20px;color:#7a7470;margin-top:12px;display:block;
+  font-family:Palatino,Georgia,serif;font-style:italic}
+
+/* ===== IMAGE ===== */
+.img-section{padding:6vh 0;text-align:center;
+  opacity:0;transform:translateY(30px);
+  transition:opacity 1s cubic-bezier(.23,1,.32,1),transform 1s cubic-bezier(.23,1,.32,1)}
+.img-section.visible{opacity:1;transform:translateY(0)}
+.img-section img{
+  max-width:100%;height:auto;
+}
+.img-section.blend img{
+  mask-image:radial-gradient(ellipse 90% 90% at 50% 50%,black 50%,transparent 95%);
+  -webkit-mask-image:radial-gradient(ellipse 90% 90% at 50% 50%,black 50%,transparent 95%);
+}
+.img-section.tilt-left img{transform:rotate(-1.5deg)}
+.img-section.tilt-right img{transform:rotate(1.5deg)}
+.img-section.tilt-slight img{transform:rotate(-0.5deg)}
+.img-caption{font-size:18px;color:#9a9490;margin-top:12px;
+  font-family:Palatino,Georgia,serif;font-style:italic}
+
+/* ===== MOMENT CARDS ===== */
+.moment-card{
+  padding:20px 0;margin-bottom:20px;
+  text-align:center;
+  opacity:0;transform:translateY(24px);
+  transition:opacity 0.8s cubic-bezier(.23,1,.32,1),transform 0.8s cubic-bezier(.23,1,.32,1);
+}
+.moment-card.visible{opacity:1;transform:translateY(0)}
+.moment-card .text{font-size:clamp(22px,3.5vw,30px);line-height:1.6;color:#2a2725}
+.moment-card .who{font-size:15px;color:#8a8480;margin-top:10px;
+  font-family:Palatino,Georgia,serif;font-style:italic;letter-spacing:0.06em}
+
+/* ===== ANCI MSG ===== */
+.anci-section{padding:8vh 0;
+  opacity:0;transform:translateY(40px);
+  transition:opacity 1.2s cubic-bezier(.23,1,.32,1),transform 1.2s cubic-bezier(.23,1,.32,1)}
+.anci-section.visible{opacity:1;transform:translateY(0)}
+.anci-label{text-align:center;font-size:16px;color:#7a7470;margin-bottom:3vh;
+  font-family:Palatino,Georgia,serif;font-style:italic;letter-spacing:0.1em}
+.anci-body{font-size:clamp(20px,3vw,26px);line-height:2;color:#3a3530;
+  border-left:2px solid #8a7560;padding-left:24px}
+.anci-body em{color:#8a7560}
+
+/* ===== DIVIDER — sketch hearts ===== */
+.sep{text-align:center;padding:5vh 0}
+.sep svg{opacity:0.25}
+
+/* ===== FINAL ===== */
+.final{text-align:center;padding:10vh 0 16vh;
+  opacity:0;transform:translateY(30px);
+  transition:opacity 1.4s cubic-bezier(.23,1,.32,1),transform 1.4s cubic-bezier(.23,1,.32,1)}
+.final.visible{opacity:1;transform:translateY(0)}
+.final .big{font-size:clamp(40px,9vw,72px);color:#2a2725;line-height:1.3}
+.final .heart{font-size:28px;display:block;margin:20px 0}
+.final .sign{font-size:clamp(24px,4vw,32px);color:#8a7560}
+.final .sub-line{font-size:clamp(18px,3vw,24px);color:#8a7560;margin-top:16px;
+  font-family:Palatino,Georgia,serif;font-style:italic}
+.final .date{font-size:14px;color:#9a9490;margin-top:28px;
+  font-family:Palatino,Georgia,serif;font-style:italic;letter-spacing:0.08em}
+
+@media(max-width:600px){
+  body{font-size:20px}
+  .letter-card{padding:28px 24px}
+  .moment-card{padding:24px 20px}
+  .anci-body{padding-left:16px}
+}
+</style>
+</head>
+<body>
+<canvas id="petals"></canvas>
+<audio id="bgMusic" loop preload="auto"><source src="music.mp3" type="audio/mpeg"></audio>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <!-- Ambient spotlight glow -->
+  <div style="position:absolute;top:30%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;
+    background:radial-gradient(ellipse,rgba(200,170,130,0.08) 0%,transparent 70%);pointer-events:none"></div>
+
+  <!-- Decorative SVG elements around the hero -->
+  <svg style="position:absolute;top:15%;left:8%;opacity:0.12;animation:fadeUp 3s ease forwards 2s" width="60" height="60" viewBox="0 0 60 60" fill="none" stroke="#6a5a48" stroke-width="1.2" stroke-linecap="round">
+    <path d="M30 52c-4-5-18-16-18-26a12 12 0 0118-10 12 12 0 0118 10c0 10-14 21-18 26z"/>
+    <path d="M30 20c2 6 2 14 0 22" opacity="0.4"/>
+  </svg>
+  <svg style="position:absolute;top:22%;right:10%;opacity:0.1;animation:fadeUp 3s ease forwards 2.3s" width="40" height="40" viewBox="0 0 60 60" fill="none" stroke="#7a6a58" stroke-width="1">
+    <path d="M30 52c-4-5-18-16-18-26a12 12 0 0118-10 12 12 0 0118 10c0 10-14 21-18 26z"/>
+  </svg>
+  <svg style="position:absolute;bottom:28%;left:15%;opacity:0.08;animation:fadeUp 3s ease forwards 2.6s" width="30" height="30" viewBox="0 0 60 60" fill="#8a7a68" fill-opacity="0.3" stroke="none">
+    <path d="M30 52c-4-5-18-16-18-26a12 12 0 0118-10 12 12 0 0118 10c0 10-14 21-18 26z"/>
+  </svg>
+  <svg style="position:absolute;bottom:25%;right:18%;opacity:0.1;animation:fadeUp 3s ease forwards 2.4s" width="45" height="45" viewBox="0 0 60 60" fill="none" stroke="#6a5a48" stroke-width="1.3" stroke-linecap="round">
+    <path d="M30 52c-4-5-18-16-18-26a12 12 0 0118-10 12 12 0 0118 10c0 10-14 21-18 26z"/>
+    <path d="M22 28c4-2 8-2 12 2" opacity="0.3"/>
+  </svg>
+
+  <!-- Thin decorative lines -->
+  <svg style="position:absolute;top:40%;left:5%;opacity:0.06;animation:fadeUp 3s ease forwards 2.5s" width="80" height="2" viewBox="0 0 80 2">
+    <line x1="0" y1="1" x2="80" y2="1" stroke="#6a5a48" stroke-width="0.8"/>
+  </svg>
+  <svg style="position:absolute;top:38%;right:5%;opacity:0.06;animation:fadeUp 3s ease forwards 2.5s" width="60" height="2" viewBox="0 0 60 2">
+    <line x1="0" y1="1" x2="60" y2="1" stroke="#6a5a48" stroke-width="0.8"/>
+  </svg>
+
+  <div class="hero-title">For Anci ♡</div>
+  <div class="hero-sub">七夕节 · Qixi Festival · August 19, 2026</div>
+  <div class="hero-prompt" id="heroPrompt">tap anywhere to begin</div>
+</section>
+
+<!-- SCROLL QUOTES -->
+<section class="quotes-stage" id="quotesStage">
+  <!-- Ambient spotlight for quotes -->
+  <div style="position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:500px;height:400px;
+    background:radial-gradient(ellipse,rgba(200,170,130,0.06) 0%,transparent 70%);pointer-events:none"></div>
+
+  <div class="quote-item">"I've never felt more appreciated to be alive. Never."<span class="quote-from">from my journal</span></div>
+  <div class="quote-item long">"You came to my life like a miracle and became a heaven the more I learned about you."<span class="quote-from">from my journal</span></div>
+  <div class="quote-item">"You taught me what love is and where it can take you."<span class="quote-from">from my journal</span></div>
+  <div class="quote-item long">"I know everything about her, and I still love her more and more. That is real love."<span class="quote-from">from my journal</span></div>
+  <div class="quote-item long">"She is a person I cannot replace. She is everything I wanted, every single standard I ever had."<span class="quote-from">from my journal</span></div>
+</section>
+
+<div class="page">
+
+  <!-- Image: together at station -->
+  <div class="img-section tilt-slight blend reveal">
+    <img src="photos/img5.jpg" alt="">
+  </div>
+
+  <div class="sep reveal">
+    <svg width="50" height="45" viewBox="0 0 50 45" fill="none" stroke="#8a7a68" stroke-width="1.3" stroke-linecap="round"><path d="M25 40c-3-4-16-14-16-24a10 10 0 0116-8 10 10 0 0116 8c0 10-13 20-16 24z"/><path d="M25 16c1.5 5 1.5 12 0 18" opacity="0.25"/></svg>
+  </div>
+
+  <!-- THE LETTER -->
+  <div class="letter-wrap">
+    <div class="letter-scene">
+      <div class="letter-spotlight"></div>
+      <div class="letter-card reveal" id="letterCard">
+        <div class="letter-inner">
+        <div class="letter-label">A letter of love</div>
+        <div class="letter-title">Dearest Anci, ♡</div>
+        <div class="letter-body">
+        <p>You might expect me to reach here for something dreamed up, something golden and soft. And I could. But I would rather give you something truer than any dream. I want to write of what is real. I want, even, to write of the hard days.</p>
+        <p>Why would a man put hardship in a love letter?</p>
+        <p>Because I have noticed something, and it has never once failed me. The hours in which I have loved you most were never the hours after a perfect evening. They were the hours after the hard one.</p>
+        <p>Strange as it sounds, it is the hardship that has made us. Every trouble we have ever met, we met as one, and from every one of them we came away loving each other more. This past month, the longest and cruellest we have ever been apart, should by all reason have worn our love thin. Instead we grew closer than we have ever been. We fell further into love than I believed a heart could fall.</p>
+        <p>Why? Is it only that we tried? Or is it that you and I were made to weather the storm, and that each time we do, we are shown once more that we belong wholly to each other?</p>
+        <p>I believe it is the second. And it is for this, above all, that I chose you. I understood long ago what love truly is. It is not the romance of the beautiful moment alone. It is romance in the plain light of the real, the very force that binds two souls to one road, one destiny, because their hearts have chosen to walk it together.</p>
+        <p>This is the love I mean, Anci. This is the love I carry for you. A love that endures the storm as faithfully as it endures the sun. A love so pure, so lovely, that it brings tears to the eye.</p>
+      </div>
+      <div class="letter-sign">
+        <span class="love">Anci, I love you. ❤️</span>
+        <span class="bunny">My beloved bunny. ♡</span>
+        <span class="from-line">Your Bulgarian — Dobri</span>
+      </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Image: bouquet -->
+  <div class="img-section tilt-left blend reveal">
+    <img src="photos/img3.jpg" alt="">
+  </div>
+
+  <div class="sep reveal">
+    <svg width="130" height="40" viewBox="0 0 130 40" fill="none" stroke="#8a7a68" stroke-width="1.2" stroke-linecap="round">
+      <path d="M25 35c-2.5-3.5-14-12-14-21a8.5 8.5 0 0114-7 8.5 8.5 0 0114 7c0 9-11.5 17.5-14 21z"/>
+      <path d="M65 32c-2-3-11-10-11-17a7 7 0 0111-5.5 7 7 0 0111 5.5c0 7-9 14-11 17z"/>
+      <path d="M105 35c-2.5-3.5-14-12-14-21a8.5 8.5 0 0114-7 8.5 8.5 0 0114 7c0 9-11.5 17.5-14 21z"/>
+    </svg>
+  </div>
+
+  <!-- MOMENTS -->
+  <div class="moment-card reveal">
+    <div class="text">"Every single day she brought light to me."</div>
+    <div class="who">— from my journal</div>
+  </div>
+
+  <div class="moment-card reveal">
+    <div class="text">"I've never been happier in my entire life. I've never felt more loved. I've never felt more taken care of."</div>
+    <div class="who">— from my journal</div>
+  </div>
+
+  <!-- Image: Anci resting -->
+  <div class="img-section tilt-right blend reveal">
+    <img src="photos/img4.jpg" alt="">
+  </div>
+
+  <div class="moment-card reveal">
+    <div class="text">"My love for you hasn't moved, and neither has my commitment. I'm still here, I still want this, and I'll fight for it, because I love you."</div>
+    <div class="who">— from my journal</div>
+  </div>
+
+  <div class="moment-card reveal">
+    <div class="text">"Every single day, I wake up, I work my ass off, and I route every single decision through the lens of whether this allows me to be with Anci or not."</div>
+    <div class="who">— from my journal</div>
+  </div>
+
+  <!-- Image: kiss at sunset -->
+  <div class="img-section blend reveal">
+    <img src="photos/img6.jpg" alt="">
+  </div>
+
+  <div class="sep reveal">
+    <svg width="50" height="45" viewBox="0 0 50 45" fill="none" stroke="#8a7a68" stroke-width="1.3" stroke-linecap="round"><path d="M25 40c-3-4-16-14-16-24a10 10 0 0116-8 10 10 0 0116 8c0 10-13 20-16 24z"/><path d="M25 16c1.5 5 1.5 12 0 18" opacity="0.25"/></svg>
+  </div>
+
+  <div class="moment-card reveal">
+    <div class="text">"You made me feel something no one else could. That's why I love you so much. It was always mutual because my love only came from you."</div>
+    <div class="who">— from my journal</div>
+  </div>
+
+  <div class="moment-card reveal">
+    <div class="text">"Your reassurance really means a lot to me. More than you know."</div>
+    <div class="who">— Anci</div>
+  </div>
+
+  <div class="moment-card reveal">
+    <div class="text">"I love you. So so much. So much…"</div>
+    <div class="who">— Anci</div>
+  </div>
+
+  <!-- Image: mirror selfie -->
+  <div class="img-section tilt-slight blend reveal">
+    <img src="photos/img7.jpg" alt="">
+  </div>
+
+  <div class="sep reveal">
+    <svg width="50" height="45" viewBox="0 0 50 45" fill="none" stroke="#8a7a68" stroke-width="1.3" stroke-linecap="round"><path d="M25 40c-3-4-16-14-16-24a10 10 0 0116-8 10 10 0 0116 8c0 10-13 20-16 24z"/><path d="M25 16c1.5 5 1.5 12 0 18" opacity="0.25"/></svg>
+  </div>
+
+  <!-- ANCI'S MESSAGE -->
+  <div class="anci-section reveal">
+    <div class="anci-label">What you wrote to me</div>
+    <div class="anci-body">
+      <em>It's gonna take time and it's going to be okay.</em><br><br>
+      <em>Know that you aren't alone and we're going through this together.</em> I'm looking for a job right now and I'll work two if I have to. Your birthday is in a few months and it's something to look forward to.<br><br>
+      <em>Know that I love you so much and we'll get through it. All this needs is some time, patience, and lots of love.</em>
+    </div>
+  </div>
+
+  <!-- Image: Dobri with rose (colored) -->
+  <div class="img-section tilt-right reveal">
+    <img src="photos/img2.jpg" alt="">
+  </div>
+
+  <!-- FINAL -->
+  <div class="final reveal">
+    <div class="big">Anci, I love you.</div>
+    <div class="sub-line">More than this entire page can ever express.</div>
+    <span class="heart">❤️</span>
+    <div class="sign">My beloved bunny. ♡</div>
+    <div class="date">七夕节 · Qixi Festival · August 19, 2026</div>
+  </div>
+
+</div>
+
+<script>
+// PETALS
+(function(){
+  var c=document.getElementById('petals'),ctx=c.getContext('2d'),ps=[],W,H;
+  function resize(){var d=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;
+    c.width=W*d;c.height=H*d;c.style.width=W+'px';c.style.height=H+'px';ctx.setTransform(d,0,0,d,0,0)}
+  function make(){return{x:Math.random()*W,y:-20-Math.random()*100,sz:4+Math.random()*8,
+    vy:0.3+Math.random()*0.6,vx:(Math.random()-0.5)*0.4,r:Math.random()*6.28,
+    rs:(Math.random()-0.5)*0.02,sw:Math.random()*6.28,ss:0.005+Math.random()*0.01,
+    sa:15+Math.random()*25,op:0.15+Math.random()*0.25,h:340+Math.random()*30,
+    s:40+Math.random()*30,l:70+Math.random()*15}}
+  function draw(){ctx.clearRect(0,0,W,H);for(var i=ps.length-1;i>=0;i--){var p=ps[i];
+    p.y+=p.vy;p.sw+=p.ss;p.r+=p.rs;var sx=p.x+Math.sin(p.sw)*p.sa;
+    if(p.y>H+20){ps[i]=make();continue}ctx.save();ctx.translate(sx,p.y);ctx.rotate(p.r);
+    ctx.globalAlpha=p.op;ctx.fillStyle='hsl('+p.h+','+p.s+'%,'+p.l+'%)';
+    ctx.beginPath();ctx.ellipse(0,0,p.sz*0.6,p.sz,0,0,6.28);ctx.fill();
+    ctx.strokeStyle='hsla('+p.h+','+(p.s-10)+'%,'+(p.l-15)+'%,0.3)';
+    ctx.lineWidth=0.5;ctx.beginPath();ctx.moveTo(0,-p.sz*0.8);ctx.lineTo(0,p.sz*0.8);
+    ctx.stroke();ctx.restore()}requestAnimationFrame(draw)}
+  resize();for(var i=0;i<30;i++){var p=make();p.y=Math.random()*H;ps.push(p)}
+  addEventListener('resize',resize);draw()
+})();
+
+// MUSIC
+(function(){var m=document.getElementById('bgMusic'),p=document.getElementById('heroPrompt'),s=false;
+  document.getElementById('hero').addEventListener('click',function(){if(s)return;s=true;
+    m.volume=0.3;m.play().catch(function(){});p.textContent='scroll down ↓';p.classList.add('started')})
+})();
+
+// SCROLL QUOTES
+(function(){var stage=document.getElementById('quotesStage'),qs=stage.querySelectorAll('.quote-item'),n=qs.length;
+  var sp=document.createElement('div');sp.style.height=(n*1.8*100)+'vh';sp.style.position='relative';
+  stage.parentNode.insertBefore(sp,stage.nextSibling);
+  stage.style.position='sticky';stage.style.top='0';stage.style.zIndex='2';
+  function upd(){var r=sp.getBoundingClientRect(),h=sp.offsetHeight;
+    var p=Math.max(0,Math.min(1,-r.top/(h-innerHeight))),seg=1/n;
+    for(var i=0;i<n;i++){var s=i*seg,e=s+seg,hs=s+seg*.25,he=e-seg*.25,q=qs[i];
+      if(p<s||p>e){q.style.opacity='0';q.style.transform='translate(-50%,-50%) scale(0.7)'}
+      else if(p<hs){var t=(p-s)/(hs-s);t=1-Math.pow(1-t,3);q.style.opacity=t;q.style.transform='translate(-50%,-50%) scale('+(0.7+0.3*t)+')'}
+      else if(p<he){q.style.opacity='1';q.style.transform='translate(-50%,-50%) scale(1)'}
+      else{var t2=(p-he)/(e-he);t2*=t2;q.style.opacity=1-t2;q.style.transform='translate(-50%,-50%) scale('+(1+0.3*t2)+')'}}}
+  addEventListener('scroll',function(){requestAnimationFrame(upd)},{passive:true});upd()
+})();
+
+// LETTER PARALLAX
+(function(){var lc=document.getElementById('letterCard');
+  document.addEventListener('mousemove',function(e){
+    var x=(e.clientX/innerWidth-0.5)*5,y=(e.clientY/innerHeight-0.5)*4;
+    lc.style.transform='rotateX('+(3-y)+'deg) rotateY('+(-1.5+x)+'deg) rotateZ(0.3deg)';
+  });
+})();
+
+// REVEAL
+(function(){var obs=new IntersectionObserver(function(es){
+    es.forEach(function(e){if(e.isIntersecting)e.target.classList.add('visible')});
+  },{threshold:0.1,rootMargin:'0px 0px -40px 0px'});
+  document.querySelectorAll('.reveal').forEach(function(el){obs.observe(el)})
+})();
+</script>
+</body>
+</html>
