@@ -180,6 +180,17 @@ body{
 </style>
 </head>
 <body>
+<!-- TAP TO BEGIN overlay -->
+<div id="musicGate" style="position:fixed;inset:0;z-index:9998;background:#ebe5db;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;
+  transition:opacity 0.8s ease;font-family:'Snell Roundhand','Apple Chancery',cursive"
+  onclick="document.getElementById('bgMusic').volume=0.3;document.getElementById('bgMusic').play();
+  this.style.opacity='0';this.style.pointerEvents='none';setTimeout(function(){document.getElementById('musicGate').style.display='none'},800)">
+  <div style="font-size:clamp(40px,10vw,72px);color:#2a2725;margin-bottom:16px">For Anci ♡</div>
+  <div style="font-size:clamp(14px,2.5vw,18px);color:#8a8480;font-family:Palatino,Georgia,serif;font-style:italic;letter-spacing:0.08em;margin-bottom:40px">七夕节 · Qixi Festival</div>
+  <div style="font-size:clamp(16px,2.5vw,20px);color:#9a9490;animation:breathe 3s ease-in-out infinite">tap to begin</div>
+</div>
+
 <canvas id="petals"></canvas>
 <audio id="bgMusic" loop preload="auto"><source src="music.mp3" type="audio/mpeg"></audio>
 
@@ -509,24 +520,7 @@ body{
   resize();for(var i=0;i<30;i++){var p=make();p.y=Math.random()*H;ps.push(p)}
   addEventListener('resize',resize);draw()
 })();
-// MUSIC — plays on any user interaction
-(function(){
-  var m=document.getElementById('bgMusic');
-  var p=document.getElementById('heroPrompt');
-  var started=false;
-  function startMusic(){
-    if(started)return;
-    started=true;
-    m.volume=0.3;
-    m.play();
-    p.textContent='scroll down ↓';
-    p.classList.add('started');
-  }
-  // Listen on EVERYTHING — click, touch, scroll
-  document.addEventListener('click',startMusic,{once:true});
-  document.addEventListener('touchstart',startMusic,{once:true});
-  document.addEventListener('scroll',function(){startMusic()},{once:true,passive:true});
-})();
+// Music handled by #musicGate overlay tap
 // SCROLL QUOTES
 (function(){var stage=document.getElementById('quotesStage'),qs=stage.querySelectorAll('.quote-item'),n=qs.length;
   var sp=document.createElement('div');sp.style.height=(n*1.8*100)+'vh';sp.style.position='relative';
