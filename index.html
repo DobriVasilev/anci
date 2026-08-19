@@ -40,69 +40,147 @@ body{
 .quote-from{display:block;font-size:15px;color:#8a8480;margin-top:14px;
   font-family:Palatino,Georgia,serif;font-style:italic}
 
-/* ===== THE LETTER ===== */
-.letter-wrap{padding:8vh 0;perspective:1000px;perspective-origin:50% 40%}
-.letter-scene{position:relative}
-.letter-spotlight{
-  position:absolute;top:-80px;left:50%;transform:translateX(-50%);
-  width:600px;height:600px;
-  background:radial-gradient(ellipse 55% 45% at 50% 25%,rgba(255,235,200,0.18) 0%,rgba(255,220,170,0.08) 35%,transparent 65%);
-  pointer-events:none;z-index:0;
+/* ===== CINEMATIC LETTER SCENE ===== */
+
+/* Full-width dark desk environment */
+.desk-scene{
+  position:relative;
+  width:100vw;margin-left:calc(-50vw + 50%);
+  background:
+    linear-gradient(175deg,#2a2018 0%,#1e1812 20%,#221c14 40%,#1a1510 60%,#201a12 80%,#181410 100%);
+  padding:12vh 0 14vh;
+  overflow:hidden;
+}
+/* Wood grain texture */
+.desk-scene::before{
+  content:'';position:absolute;inset:0;
+  background-image:
+    repeating-linear-gradient(175deg,transparent,transparent 40px,rgba(255,255,255,0.008) 40px,rgba(255,255,255,0.008) 41px),
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+  background-size:100% 100%,150px 150px;
+  pointer-events:none;
+}
+/* Gradient transitions into/out of desk */
+.desk-fade-in{
+  height:20vh;
+  background:linear-gradient(to bottom,#ebe5db 0%,#ebe5db 10%,#2a2018 100%);
+  margin-left:calc(-50vw + 50%);width:100vw;
+}
+.desk-fade-out{
+  height:20vh;
+  background:linear-gradient(to bottom,#1a1510 0%,#ebe5db 90%,#ebe5db 100%);
+  margin-left:calc(-50vw + 50%);width:100vw;
+}
+
+/* Candle */
+.candle-wrap{position:absolute;top:8vh;right:12%;z-index:3;pointer-events:none}
+.candle-body{width:24px;height:80px;background:linear-gradient(90deg,#e8dcc8,#f4ece0,#e8dcc8);
+  border-radius:2px 2px 0 0;margin:0 auto;position:relative}
+.candle-body::after{content:'';position:absolute;top:-2px;left:50%;transform:translateX(-50%);
+  width:2px;height:12px;background:linear-gradient(to top,#2a2018,#555)}
+.candle-flame{width:12px;height:22px;position:relative;margin:-14px auto 0;
+  background:radial-gradient(ellipse at 50% 80%,#ffdd44,#ff8800 60%,transparent 100%);
+  border-radius:50% 50% 50% 50% / 60% 60% 40% 40%;
+  animation:flicker 0.15s infinite alternate}
+.candle-glow{position:absolute;top:-40px;left:50%;transform:translateX(-50%);
+  width:200px;height:200px;
+  background:radial-gradient(ellipse,rgba(255,200,100,0.12) 0%,rgba(255,180,80,0.04) 40%,transparent 70%);
+  pointer-events:none}
+@keyframes flicker{
+  0%{transform:scaleY(1) scaleX(1);opacity:0.9}
+  25%{transform:scaleY(1.04) scaleX(0.96)}
+  50%{transform:scaleY(0.96) scaleX(1.02);opacity:1}
+  75%{transform:scaleY(1.02) scaleX(0.98)}
+  100%{transform:scaleY(0.98) scaleX(1.04);opacity:0.85}
+}
+
+/* Warm directional light across desk */
+.desk-light{
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse 50% 60% at 70% 15%,rgba(255,200,120,0.06) 0%,transparent 60%);
+  pointer-events:none;z-index:1;
+}
+
+/* Vignette around desk */
+.desk-vignette{
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse 70% 65% at 50% 45%,transparent 30%,rgba(0,0,0,0.4) 100%);
+  pointer-events:none;z-index:2;
+}
+
+/* Letter card on desk */
+.letter-wrap{
+  position:relative;z-index:3;
+  max-width:620px;margin:0 auto;
+  padding:0 20px;
+  perspective:900px;perspective-origin:50% 40%;
 }
 .letter-card{
-  position:relative;z-index:1;
+  position:relative;
   background:
     linear-gradient(170deg,
       #f8f2e6 0%,#f4ece0 8%,#f0e8da 15%,#ede4d4 25%,
       #f2eade 35%,#eee3d4 50%,#ebe0d0 65%,
       #e8dbc8 80%,#e5d8c4 90%,#e2d4c0 100%);
-  border-radius:2px;
   overflow:visible;
   box-shadow:
-    0 2px 4px rgba(0,0,0,0.06),
-    0 8px 20px rgba(0,0,0,0.1),
-    0 20px 50px rgba(0,0,0,0.08),
-    0 40px 80px rgba(0,0,0,0.05),
+    0 4px 8px rgba(0,0,0,0.2),
+    0 12px 30px rgba(0,0,0,0.25),
+    0 30px 60px rgba(0,0,0,0.15),
     inset 0 0 60px rgba(120,100,70,0.04);
   transform:rotateX(3deg) rotateY(-1.5deg) rotateZ(0.3deg);
   transform-style:preserve-3d;
-  transition:opacity 1.2s cubic-bezier(.23,1,.32,1),transform 0.5s cubic-bezier(.23,1,.32,1);
+  transition:opacity 1.5s cubic-bezier(.23,1,.32,1),transform 0.5s cubic-bezier(.23,1,.32,1);
   opacity:0;
+  /* Irregular torn edges */
+  clip-path:polygon(
+    0.5% 1.2%, 2% 0.3%, 5% 1%, 8% 0%, 12% 0.8%, 16% 0.2%, 20% 1.5%, 25% 0.4%, 30% 1%, 35% 0.2%, 40% 0.8%, 45% 0%, 50% 1.2%, 55% 0.3%, 60% 0.9%, 65% 0%, 70% 1.4%, 75% 0.5%, 80% 0.2%, 85% 1%, 90% 0.3%, 95% 1.2%, 98% 0%, 100% 0.8%,
+    99.5% 3%, 100% 8%, 99.6% 15%, 100% 22%, 99.4% 30%, 100% 38%, 99.7% 45%, 100% 52%, 99.5% 60%, 100% 68%, 99.6% 75%, 100% 82%, 99.4% 88%, 100% 94%, 99.8% 98%,
+    99% 99.5%, 95% 100%, 90% 99.2%, 85% 100%, 80% 99.5%, 75% 100%, 70% 99.3%, 65% 100%, 60% 99.6%, 55% 100%, 50% 99.2%, 45% 100%, 40% 99.5%, 35% 100%, 30% 99.3%, 25% 100%, 20% 99.6%, 15% 100%, 10% 99.4%, 5% 100%, 2% 99.2%, 0% 99.5%,
+    0.4% 95%, 0% 88%, 0.6% 80%, 0% 72%, 0.5% 65%, 0% 58%, 0.4% 50%, 0% 42%, 0.6% 35%, 0% 28%, 0.5% 20%, 0% 12%, 0.4% 5%
+  );
 }
-.letter-card.visible{opacity:1;animation:letterHover 8s ease-in-out infinite}
+.letter-card.visible{opacity:1;animation:letterHover 10s ease-in-out infinite}
 @keyframes letterHover{
   0%,100%{transform:rotateX(3deg) rotateY(-1.5deg) rotateZ(0.3deg) translateY(0)}
-  50%{transform:rotateX(2deg) rotateY(-0.5deg) rotateZ(0.1deg) translateY(-8px)}
+  50%{transform:rotateX(2deg) rotateY(-0.5deg) rotateZ(0.1deg) translateY(-6px)}
 }
-/* Paper texture overlay */
+/* Paper texture */
 .letter-card::before{
   content:'';position:absolute;inset:0;z-index:1;pointer-events:none;
   background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
-  background-size:200px 200px;
-  mix-blend-mode:multiply;
+  background-size:200px 200px;mix-blend-mode:multiply;
 }
-/* Edge aging/staining */
-.letter-stain-tl{position:absolute;top:-2px;left:-2px;width:120px;height:120px;
-  background:radial-gradient(circle at 0% 0%,rgba(160,130,90,0.15) 0%,rgba(160,130,90,0.04) 50%,transparent 70%);
+/* Aging stains */
+.letter-stain-tl{position:absolute;top:0;left:0;width:140px;height:140px;
+  background:radial-gradient(circle at 0% 0%,rgba(150,120,80,0.18) 0%,rgba(150,120,80,0.04) 50%,transparent 70%);
   pointer-events:none;z-index:2}
-.letter-stain-br{position:absolute;bottom:-2px;right:-2px;width:140px;height:140px;
-  background:radial-gradient(circle at 100% 100%,rgba(140,110,70,0.12) 0%,rgba(140,110,70,0.03) 50%,transparent 70%);
+.letter-stain-br{position:absolute;bottom:0;right:0;width:160px;height:160px;
+  background:radial-gradient(circle at 100% 100%,rgba(130,100,60,0.15) 0%,rgba(130,100,60,0.03) 50%,transparent 70%);
   pointer-events:none;z-index:2}
-.letter-stain-tr{position:absolute;top:20px;right:20px;width:60px;height:60px;
-  border:2px solid rgba(150,120,70,0.06);border-radius:50%;
-  box-shadow:inset 0 0 10px rgba(150,120,70,0.03);
-  pointer-events:none;z-index:2}
-/* Paper depth */
+/* Paper depth shadow */
 .letter-card::after{
   content:'';position:absolute;
-  top:3px;right:-4px;bottom:-4px;left:3px;
-  background:linear-gradient(180deg,#e0d6c6,#d8ceba);
-  border-radius:2px;z-index:-1;transform:translateZ(-6px);
+  top:4px;right:-5px;bottom:-5px;left:4px;
+  background:linear-gradient(180deg,#d0c4b0,#c4b8a2);
+  z-index:-1;transform:translateZ(-8px);
 }
-.letter-content{
-  position:relative;z-index:3;
-  padding:clamp(40px,6vw,64px) clamp(36px,5vw,56px);
+
+/* Wax seal */
+.wax-seal{
+  position:absolute;bottom:40px;right:40px;z-index:5;
+  width:55px;height:55px;
+  background:radial-gradient(circle at 40% 35%,#9e2020,#7a1818 40%,#5a1010 80%);
+  border-radius:50%;
+  box-shadow:0 2px 6px rgba(0,0,0,0.3),inset 0 1px 3px rgba(255,255,255,0.15),inset 0 -2px 4px rgba(0,0,0,0.2);
 }
+.wax-seal::after{
+  content:'♡';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-size:22px;color:rgba(255,255,255,0.2);text-shadow:0 1px 1px rgba(0,0,0,0.3);
+}
+
+.letter-content{position:relative;z-index:3;
+  padding:clamp(44px,6vw,68px) clamp(40px,5vw,60px)}
 .letter-label{font-family:Palatino,Georgia,serif;font-style:italic;font-size:16px;
   letter-spacing:0.1em;color:#7a7470;margin-bottom:6px}
 .letter-title{font-size:clamp(38px,7vw,58px);color:#2a2725;margin-bottom:0.6em;line-height:1.2}
@@ -238,15 +316,29 @@ body{
 
   <div class="sep reveal"><svg width="50" height="45" viewBox="0 0 50 45" fill="none" stroke="#8a7a68" stroke-width="1.3" stroke-linecap="round"><path d="M25 40c-3-4-16-14-16-24a10 10 0 0116-8 10 10 0 0116 8c0 10-13 20-16 24z"/><path d="M25 16c1.5 5 1.5 12 0 18" opacity="0.25"/><path d="M16 18c2 1 4 4 5 7" stroke-width="0.5" opacity="0.15"/><path d="M34 18c-2 1-4 4-5 7" stroke-width="0.5" opacity="0.15"/></svg></div>
 
-  <!-- ===== THE LETTER ===== -->
+  <!-- ===== CINEMATIC TRANSITION INTO LETTER ===== -->
+</div><!-- close .page temporarily -->
+
+<div class="desk-fade-in"></div>
+<div class="desk-scene">
+  <!-- Warm directional light from candle -->
+  <div class="desk-light"></div>
+  <div class="desk-vignette"></div>
+
+  <!-- Candle -->
+  <div class="candle-wrap">
+    <div class="candle-glow"></div>
+    <div class="candle-flame"></div>
+    <div class="candle-body"></div>
+  </div>
+
   <div class="letter-wrap">
-    <div class="letter-scene">
-      <div class="letter-spotlight"></div>
-      <div class="letter-card reveal" id="letterCard">
-        <!-- Aging stains -->
-        <div class="letter-stain-tl"></div>
-        <div class="letter-stain-br"></div>
-        <div class="letter-stain-tr"></div>
+    <div class="letter-card reveal" id="letterCard">
+      <!-- Aging stains -->
+      <div class="letter-stain-tl"></div>
+      <div class="letter-stain-br"></div>
+      <!-- Wax seal -->
+      <div class="wax-seal"></div>
 
         <!-- ===== DETAILED SVG: ROSE (right side) ===== -->
         <div class="letter-illust rose-right" style="right:-30px;top:15%;width:130px;height:380px">
@@ -425,7 +517,10 @@ body{
       </div>
     </div>
   </div>
+</div>
+<div class="desk-fade-out"></div>
 
+<div class="page">
   <!-- Roses + laughing — the most joyful photo -->
   <div class="img-section blend reveal"><img src="photos/img13.jpg" alt=""></div>
 
