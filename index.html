@@ -509,10 +509,17 @@ body{
   resize();for(var i=0;i<30;i++){var p=make();p.y=Math.random()*H;ps.push(p)}
   addEventListener('resize',resize);draw()
 })();
-// MUSIC
+// MUSIC — starts on first interaction (click, touch, or scroll)
 (function(){var m=document.getElementById('bgMusic'),p=document.getElementById('heroPrompt'),s=false;
-  document.getElementById('hero').addEventListener('click',function(){if(s)return;s=true;
-    m.volume=0.3;m.play().catch(function(){});p.textContent='scroll down ↓';p.classList.add('started')})
+  function start(){if(s)return;s=true;
+    m.volume=0.3;m.play().catch(function(){});
+    p.textContent='scroll down ↓';p.classList.add('started');
+    document.removeEventListener('scroll',start);
+    document.removeEventListener('touchstart',start);
+  }
+  document.getElementById('hero').addEventListener('click',start);
+  document.addEventListener('scroll',start,{once:true,passive:true});
+  document.addEventListener('touchstart',start,{once:true,passive:true});
 })();
 // SCROLL QUOTES
 (function(){var stage=document.getElementById('quotesStage'),qs=stage.querySelectorAll('.quote-item'),n=qs.length;
