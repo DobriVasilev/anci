@@ -509,25 +509,23 @@ body{
   resize();for(var i=0;i<30;i++){var p=make();p.y=Math.random()*H;ps.push(p)}
   addEventListener('resize',resize);draw()
 })();
-// MUSIC — try autoplay, fallback to first interaction
-(function(){var m=document.getElementById('bgMusic'),p=document.getElementById('heroPrompt'),s=false;
-  function start(){if(s)return;s=true;
-    m.volume=0.3;m.play().catch(function(){});
-    p.textContent='scroll down ↓';p.classList.add('started');
+// MUSIC — plays on any user interaction
+(function(){
+  var m=document.getElementById('bgMusic');
+  var p=document.getElementById('heroPrompt');
+  var started=false;
+  function startMusic(){
+    if(started)return;
+    started=true;
+    m.volume=0.3;
+    m.play();
+    p.textContent='scroll down ↓';
+    p.classList.add('started');
   }
-  // Try autoplay immediately
-  m.volume=0.3;
-  var autoplayAttempt=m.play();
-  if(autoplayAttempt!==undefined){
-    autoplayAttempt.then(function(){
-      s=true;p.textContent='scroll down ↓';p.classList.add('started');
-    }).catch(function(){
-      // Autoplay blocked — wait for any interaction
-      document.getElementById('hero').addEventListener('click',start);
-      document.addEventListener('scroll',start,{once:true,passive:true});
-      document.addEventListener('touchstart',start,{once:true,passive:true});
-    });
-  }
+  // Listen on EVERYTHING — click, touch, scroll
+  document.addEventListener('click',startMusic,{once:true});
+  document.addEventListener('touchstart',startMusic,{once:true});
+  document.addEventListener('scroll',function(){startMusic()},{once:true,passive:true});
 })();
 // SCROLL QUOTES
 (function(){var stage=document.getElementById('quotesStage'),qs=stage.querySelectorAll('.quote-item'),n=qs.length;
