@@ -15,13 +15,11 @@ body{
   -webkit-font-smoothing:antialiased;
 }
 #petals{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:100}
-
-/* ===== LAYOUT ===== */
 .page{max-width:700px;margin:0 auto;padding:0 20px}
 
 /* ===== HERO ===== */
 .hero{position:relative;width:100%;height:100vh;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer}
+  display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;overflow:hidden}
 .hero-title{font-size:clamp(56px,14vw,120px);color:#2a2725;
   opacity:0;transform:translateY(24px);animation:fadeUp 2.5s cubic-bezier(.23,1,.32,1) forwards 0.3s}
 .hero-sub{font-size:clamp(16px,2.5vw,20px);color:#6a6460;
@@ -42,61 +40,69 @@ body{
 .quote-from{display:block;font-size:15px;color:#8a8480;margin-top:14px;
   font-family:Palatino,Georgia,serif;font-style:italic}
 
-/* ===== THE LETTER — 3D parchment with spotlight ===== */
+/* ===== THE LETTER ===== */
 .letter-wrap{padding:8vh 0;perspective:1000px;perspective-origin:50% 40%}
 .letter-scene{position:relative}
-
-/* Spotlight glow behind the letter */
 .letter-spotlight{
-  position:absolute;top:-60px;left:50%;transform:translateX(-50%);
-  width:500px;height:500px;
-  background:radial-gradient(ellipse 60% 50% at 50% 30%,rgba(255,240,210,0.15) 0%,rgba(255,230,180,0.06) 40%,transparent 70%);
+  position:absolute;top:-80px;left:50%;transform:translateX(-50%);
+  width:600px;height:600px;
+  background:radial-gradient(ellipse 55% 45% at 50% 25%,rgba(255,235,200,0.18) 0%,rgba(255,220,170,0.08) 35%,transparent 65%);
   pointer-events:none;z-index:0;
 }
-
 .letter-card{
   position:relative;z-index:1;
   background:
-    url('notebook-ref.png') center/cover no-repeat;
-  border-radius:3px;
-  overflow:hidden;
+    linear-gradient(170deg,
+      #f8f2e6 0%,#f4ece0 8%,#f0e8da 15%,#ede4d4 25%,
+      #f2eade 35%,#eee3d4 50%,#ebe0d0 65%,
+      #e8dbc8 80%,#e5d8c4 90%,#e2d4c0 100%);
+  border-radius:2px;
+  overflow:visible;
   box-shadow:
-    0 4px 8px rgba(0,0,0,0.08),
-    0 12px 32px rgba(0,0,0,0.12),
-    0 24px 64px rgba(0,0,0,0.08);
+    0 2px 4px rgba(0,0,0,0.06),
+    0 8px 20px rgba(0,0,0,0.1),
+    0 20px 50px rgba(0,0,0,0.08),
+    0 40px 80px rgba(0,0,0,0.05),
+    inset 0 0 60px rgba(120,100,70,0.04);
   transform:rotateX(3deg) rotateY(-1.5deg) rotateZ(0.3deg);
   transform-style:preserve-3d;
   transition:opacity 1.2s cubic-bezier(.23,1,.32,1),transform 0.5s cubic-bezier(.23,1,.32,1);
   opacity:0;
 }
-.letter-card.visible{
-  opacity:1;
-  animation:letterHover 8s ease-in-out infinite;
-}
+.letter-card.visible{opacity:1;animation:letterHover 8s ease-in-out infinite}
 @keyframes letterHover{
   0%,100%{transform:rotateX(3deg) rotateY(-1.5deg) rotateZ(0.3deg) translateY(0)}
   50%{transform:rotateX(2deg) rotateY(-0.5deg) rotateZ(0.1deg) translateY(-8px)}
 }
-
-/* Inner overlay: washes out original text, keeps edge decorations visible */
-.letter-inner{
-  background:
-    radial-gradient(ellipse 82% 85% at 40% 48%,rgba(248,243,234,0.94) 0%,rgba(248,243,234,0.88) 50%,rgba(248,243,234,0.5) 78%,transparent 100%);
-  padding:clamp(40px,6vw,64px) clamp(36px,5vw,56px) clamp(40px,6vw,64px) clamp(40px,5vw,60px);
-  min-height:600px;
-  position:relative;
+/* Paper texture overlay */
+.letter-card::before{
+  content:'';position:absolute;inset:0;z-index:1;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+  background-size:200px 200px;
+  mix-blend-mode:multiply;
 }
-
-/* Paper edge thickness (3D) */
+/* Edge aging/staining */
+.letter-stain-tl{position:absolute;top:-2px;left:-2px;width:120px;height:120px;
+  background:radial-gradient(circle at 0% 0%,rgba(160,130,90,0.15) 0%,rgba(160,130,90,0.04) 50%,transparent 70%);
+  pointer-events:none;z-index:2}
+.letter-stain-br{position:absolute;bottom:-2px;right:-2px;width:140px;height:140px;
+  background:radial-gradient(circle at 100% 100%,rgba(140,110,70,0.12) 0%,rgba(140,110,70,0.03) 50%,transparent 70%);
+  pointer-events:none;z-index:2}
+.letter-stain-tr{position:absolute;top:20px;right:20px;width:60px;height:60px;
+  border:2px solid rgba(150,120,70,0.06);border-radius:50%;
+  box-shadow:inset 0 0 10px rgba(150,120,70,0.03);
+  pointer-events:none;z-index:2}
+/* Paper depth */
 .letter-card::after{
   content:'';position:absolute;
-  top:4px;right:-5px;bottom:-5px;left:4px;
-  background:linear-gradient(180deg,#e8dfd2,#e0d6c8);
-  border-radius:2px;z-index:-1;
-  transform:translateZ(-8px);
-  border:1px solid rgba(0,0,0,0.05);
+  top:3px;right:-4px;bottom:-4px;left:3px;
+  background:linear-gradient(180deg,#e0d6c6,#d8ceba);
+  border-radius:2px;z-index:-1;transform:translateZ(-6px);
 }
-
+.letter-content{
+  position:relative;z-index:3;
+  padding:clamp(40px,6vw,64px) clamp(36px,5vw,56px);
+}
 .letter-label{font-family:Palatino,Georgia,serif;font-style:italic;font-size:16px;
   letter-spacing:0.1em;color:#7a7470;margin-bottom:6px}
 .letter-title{font-size:clamp(38px,7vw,58px);color:#2a2725;margin-bottom:0.6em;line-height:1.2}
@@ -109,14 +115,15 @@ body{
 .letter-sign .from-line{font-size:20px;color:#7a7470;margin-top:12px;display:block;
   font-family:Palatino,Georgia,serif;font-style:italic}
 
+/* SVG illustrations positioned around letter */
+.letter-illust{position:absolute;pointer-events:none;z-index:4}
+
 /* ===== IMAGE ===== */
 .img-section{padding:6vh 0;text-align:center;
   opacity:0;transform:translateY(30px);
   transition:opacity 1s cubic-bezier(.23,1,.32,1),transform 1s cubic-bezier(.23,1,.32,1)}
 .img-section.visible{opacity:1;transform:translateY(0)}
-.img-section img{
-  max-width:100%;height:auto;
-}
+.img-section img{max-width:100%;height:auto}
 .img-section.blend img{
   mask-image:radial-gradient(ellipse 90% 90% at 50% 50%,black 50%,transparent 95%);
   -webkit-mask-image:radial-gradient(ellipse 90% 90% at 50% 50%,black 50%,transparent 95%);
@@ -124,24 +131,18 @@ body{
 .img-section.tilt-left img{transform:rotate(-1.5deg)}
 .img-section.tilt-right img{transform:rotate(1.5deg)}
 .img-section.tilt-slight img{transform:rotate(-0.5deg)}
-.img-caption{font-size:18px;color:#9a9490;margin-top:12px;
-  font-family:Palatino,Georgia,serif;font-style:italic}
 
 /* ===== MOMENT CARDS ===== */
-.moment-card{
-  padding:20px 0;margin-bottom:20px;
-  text-align:center;
+.moment-card{padding:20px 0;margin-bottom:20px;text-align:center;
   opacity:0;transform:translateY(24px);
-  transition:opacity 0.8s cubic-bezier(.23,1,.32,1),transform 0.8s cubic-bezier(.23,1,.32,1);
-}
+  transition:opacity 0.8s cubic-bezier(.23,1,.32,1),transform 0.8s cubic-bezier(.23,1,.32,1)}
 .moment-card.visible{opacity:1;transform:translateY(0)}
 .moment-card .text{font-size:clamp(22px,3.5vw,30px);line-height:1.6;color:#2a2725}
 .moment-card .who{font-size:15px;color:#8a8480;margin-top:10px;
   font-family:Palatino,Georgia,serif;font-style:italic;letter-spacing:0.06em}
 
 /* ===== ANCI MSG ===== */
-.anci-section{padding:8vh 0;
-  opacity:0;transform:translateY(40px);
+.anci-section{padding:8vh 0;opacity:0;transform:translateY(40px);
   transition:opacity 1.2s cubic-bezier(.23,1,.32,1),transform 1.2s cubic-bezier(.23,1,.32,1)}
 .anci-section.visible{opacity:1;transform:translateY(0)}
 .anci-label{text-align:center;font-size:16px;color:#7a7470;margin-bottom:3vh;
@@ -150,7 +151,7 @@ body{
   border-left:2px solid #8a7560;padding-left:24px}
 .anci-body em{color:#8a7560}
 
-/* ===== DIVIDER — sketch hearts ===== */
+/* ===== DIVIDER ===== */
 .sep{text-align:center;padding:5vh 0}
 .sep svg{opacity:0.25}
 
@@ -169,9 +170,12 @@ body{
 
 @media(max-width:600px){
   body{font-size:20px}
-  .letter-card{padding:28px 24px}
-  .moment-card{padding:24px 20px}
+  .letter-content{padding:32px 24px}
+  .moment-card{padding:16px 0}
   .anci-body{padding-left:16px}
+  .letter-illust.rose-right{right:-20px !important;width:100px !important}
+  .letter-illust.stars-top{width:100px !important}
+  .letter-illust.envelope-bl{width:70px !important}
 }
 </style>
 </head>
@@ -179,47 +183,48 @@ body{
 <canvas id="petals"></canvas>
 <audio id="bgMusic" loop preload="auto"><source src="music.mp3" type="audio/mpeg"></audio>
 
-<!-- HERO -->
+<!-- ===== HERO ===== -->
 <section class="hero" id="hero">
-  <!-- Ambient spotlight glow -->
   <div style="position:absolute;top:30%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;
     background:radial-gradient(ellipse,rgba(200,170,130,0.08) 0%,transparent 70%);pointer-events:none"></div>
-
-  <!-- Decorative SVG elements around the hero -->
-  <svg style="position:absolute;top:15%;left:8%;opacity:0.12;animation:fadeUp 3s ease forwards 2s" width="60" height="60" viewBox="0 0 60 60" fill="none" stroke="#6a5a48" stroke-width="1.2" stroke-linecap="round">
-    <path d="M30 52c-4-5-18-16-18-26a12 12 0 0118-10 12 12 0 0118 10c0 10-14 21-18 26z"/>
-    <path d="M30 20c2 6 2 14 0 22" opacity="0.4"/>
+  <!-- Detailed sketch hearts -->
+  <svg style="position:absolute;top:15%;left:8%;opacity:0;animation:fadeUp 3s ease forwards 2s" width="60" height="55" viewBox="0 0 60 55" fill="none" stroke="#6a5a48" stroke-linecap="round">
+    <path d="M30 48c-4-5-22-16-22-28a13 13 0 0122-10 13 13 0 0122 10c0 12-18 23-22 28z" stroke-width="1.2"/>
+    <path d="M30 18c2 6 2 16 0 24" stroke-width="0.6" opacity="0.3"/>
+    <path d="M14 20c3 2 6 6 8 12" stroke-width="0.5" opacity="0.2"/>
+    <path d="M46 20c-3 2-6 6-8 12" stroke-width="0.5" opacity="0.2"/>
+    <path d="M12 18c1-1 3-1 5 0" stroke-width="0.4" opacity="0.15"/>
+    <path d="M43 18c1-1 3-1 5 0" stroke-width="0.4" opacity="0.15"/>
   </svg>
-  <svg style="position:absolute;top:22%;right:10%;opacity:0.1;animation:fadeUp 3s ease forwards 2.3s" width="40" height="40" viewBox="0 0 60 60" fill="none" stroke="#7a6a58" stroke-width="1">
-    <path d="M30 52c-4-5-18-16-18-26a12 12 0 0118-10 12 12 0 0118 10c0 10-14 21-18 26z"/>
+  <svg style="position:absolute;top:22%;right:10%;opacity:0;animation:fadeUp 3s ease forwards 2.3s" width="40" height="38" viewBox="0 0 60 55" fill="none" stroke="#7a6a58" stroke-width="1" stroke-linecap="round">
+    <path d="M30 48c-4-5-22-16-22-28a13 13 0 0122-10 13 13 0 0122 10c0 12-18 23-22 28z"/>
+    <path d="M20 16c2 3 4 8 5 14" stroke-width="0.5" opacity="0.2"/>
+    <path d="M40 16c-2 3-4 8-5 14" stroke-width="0.5" opacity="0.2"/>
   </svg>
-  <svg style="position:absolute;bottom:28%;left:15%;opacity:0.08;animation:fadeUp 3s ease forwards 2.6s" width="30" height="30" viewBox="0 0 60 60" fill="#8a7a68" fill-opacity="0.3" stroke="none">
-    <path d="M30 52c-4-5-18-16-18-26a12 12 0 0118-10 12 12 0 0118 10c0 10-14 21-18 26z"/>
+  <svg style="position:absolute;bottom:28%;left:15%;opacity:0;animation:fadeUp 3s ease forwards 2.6s" width="30" height="28" viewBox="0 0 60 55" fill="#8a7a68" fill-opacity="0.15" stroke="#8a7a68" stroke-width="0.8">
+    <path d="M30 48c-4-5-22-16-22-28a13 13 0 0122-10 13 13 0 0122 10c0 12-18 23-22 28z"/>
   </svg>
-  <svg style="position:absolute;bottom:25%;right:18%;opacity:0.1;animation:fadeUp 3s ease forwards 2.4s" width="45" height="45" viewBox="0 0 60 60" fill="none" stroke="#6a5a48" stroke-width="1.3" stroke-linecap="round">
-    <path d="M30 52c-4-5-18-16-18-26a12 12 0 0118-10 12 12 0 0118 10c0 10-14 21-18 26z"/>
-    <path d="M22 28c4-2 8-2 12 2" opacity="0.3"/>
+  <svg style="position:absolute;bottom:25%;right:18%;opacity:0;animation:fadeUp 3s ease forwards 2.4s" width="45" height="42" viewBox="0 0 60 55" fill="none" stroke="#6a5a48" stroke-linecap="round">
+    <path d="M30 48c-4-5-22-16-22-28a13 13 0 0122-10 13 13 0 0122 10c0 12-18 23-22 28z" stroke-width="1.3"/>
+    <path d="M18 22c3 1 6 4 7 8" stroke-width="0.5" opacity="0.25"/>
+    <path d="M42 22c-3 1-6 4-7 8" stroke-width="0.5" opacity="0.25"/>
+    <path d="M30 15c1 4 1 10 0 16" stroke-width="0.5" opacity="0.2"/>
   </svg>
-
-  <!-- Thin decorative lines -->
-  <svg style="position:absolute;top:40%;left:5%;opacity:0.06;animation:fadeUp 3s ease forwards 2.5s" width="80" height="2" viewBox="0 0 80 2">
-    <line x1="0" y1="1" x2="80" y2="1" stroke="#6a5a48" stroke-width="0.8"/>
+  <svg style="position:absolute;top:40%;left:5%;opacity:0;animation:fadeUp 3s ease forwards 2.5s" width="80" height="2" viewBox="0 0 80 2">
+    <line x1="0" y1="1" x2="80" y2="1" stroke="#6a5a48" stroke-width="0.6" opacity="0.08"/>
   </svg>
-  <svg style="position:absolute;top:38%;right:5%;opacity:0.06;animation:fadeUp 3s ease forwards 2.5s" width="60" height="2" viewBox="0 0 60 2">
-    <line x1="0" y1="1" x2="60" y2="1" stroke="#6a5a48" stroke-width="0.8"/>
+  <svg style="position:absolute;top:38%;right:5%;opacity:0;animation:fadeUp 3s ease forwards 2.5s" width="60" height="2" viewBox="0 0 60 2">
+    <line x1="0" y1="1" x2="60" y2="1" stroke="#6a5a48" stroke-width="0.6" opacity="0.08"/>
   </svg>
-
   <div class="hero-title">For Anci ♡</div>
   <div class="hero-sub">七夕节 · Qixi Festival · August 19, 2026</div>
   <div class="hero-prompt" id="heroPrompt">tap anywhere to begin</div>
 </section>
 
-<!-- SCROLL QUOTES -->
+<!-- ===== SCROLL QUOTES ===== -->
 <section class="quotes-stage" id="quotesStage">
-  <!-- Ambient spotlight for quotes -->
   <div style="position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:500px;height:400px;
     background:radial-gradient(ellipse,rgba(200,170,130,0.06) 0%,transparent 70%);pointer-events:none"></div>
-
   <div class="quote-item">"I've never felt more appreciated to be alive. Never."<span class="quote-from">from my journal</span></div>
   <div class="quote-item long">"You came to my life like a miracle and became a heaven the more I learned about you."<span class="quote-from">from my journal</span></div>
   <div class="quote-item">"You taught me what love is and where it can take you."<span class="quote-from">from my journal</span></div>
@@ -229,115 +234,222 @@ body{
 
 <div class="page">
 
-  <!-- Image: together at station -->
-  <div class="img-section tilt-slight blend reveal">
-    <img src="photos/img5.jpg" alt="">
-  </div>
+  <div class="img-section tilt-slight blend reveal"><img src="photos/img5.jpg" alt=""></div>
 
-  <div class="sep reveal">
-    <svg width="50" height="45" viewBox="0 0 50 45" fill="none" stroke="#8a7a68" stroke-width="1.3" stroke-linecap="round"><path d="M25 40c-3-4-16-14-16-24a10 10 0 0116-8 10 10 0 0116 8c0 10-13 20-16 24z"/><path d="M25 16c1.5 5 1.5 12 0 18" opacity="0.25"/></svg>
-  </div>
+  <div class="sep reveal"><svg width="50" height="45" viewBox="0 0 50 45" fill="none" stroke="#8a7a68" stroke-width="1.3" stroke-linecap="round"><path d="M25 40c-3-4-16-14-16-24a10 10 0 0116-8 10 10 0 0116 8c0 10-13 20-16 24z"/><path d="M25 16c1.5 5 1.5 12 0 18" opacity="0.25"/><path d="M16 18c2 1 4 4 5 7" stroke-width="0.5" opacity="0.15"/><path d="M34 18c-2 1-4 4-5 7" stroke-width="0.5" opacity="0.15"/></svg></div>
 
-  <!-- THE LETTER -->
+  <!-- ===== THE LETTER ===== -->
   <div class="letter-wrap">
     <div class="letter-scene">
       <div class="letter-spotlight"></div>
       <div class="letter-card reveal" id="letterCard">
-        <div class="letter-inner">
-        <div class="letter-label">A letter of love</div>
-        <div class="letter-title">Dearest Anci, ♡</div>
-        <div class="letter-body">
-        <p>You might expect me to reach here for something dreamed up, something golden and soft. And I could. But I would rather give you something truer than any dream. I want to write of what is real. I want, even, to write of the hard days.</p>
-        <p>Why would a man put hardship in a love letter?</p>
-        <p>Because I have noticed something, and it has never once failed me. The hours in which I have loved you most were never the hours after a perfect evening. They were the hours after the hard one.</p>
-        <p>Strange as it sounds, it is the hardship that has made us. Every trouble we have ever met, we met as one, and from every one of them we came away loving each other more. This past month, the longest and cruellest we have ever been apart, should by all reason have worn our love thin. Instead we grew closer than we have ever been. We fell further into love than I believed a heart could fall.</p>
-        <p>Why? Is it only that we tried? Or is it that you and I were made to weather the storm, and that each time we do, we are shown once more that we belong wholly to each other?</p>
-        <p>I believe it is the second. And it is for this, above all, that I chose you. I understood long ago what love truly is. It is not the romance of the beautiful moment alone. It is romance in the plain light of the real, the very force that binds two souls to one road, one destiny, because their hearts have chosen to walk it together.</p>
-        <p>This is the love I mean, Anci. This is the love I carry for you. A love that endures the storm as faithfully as it endures the sun. A love so pure, so lovely, that it brings tears to the eye.</p>
-      </div>
-      <div class="letter-sign">
-        <span class="love">Anci, I love you. ❤️</span>
-        <span class="bunny">My beloved bunny. ♡</span>
-        <span class="from-line">Your Bulgarian — Dobri</span>
-      </div>
+        <!-- Aging stains -->
+        <div class="letter-stain-tl"></div>
+        <div class="letter-stain-br"></div>
+        <div class="letter-stain-tr"></div>
+
+        <!-- ===== DETAILED SVG: ROSE (right side) ===== -->
+        <div class="letter-illust rose-right" style="right:-30px;top:15%;width:130px;height:380px">
+          <svg viewBox="0 0 130 380" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g stroke="#5a4a38" stroke-linecap="round" opacity="0.35">
+              <!-- Rose bloom: layered petals with cross-hatching -->
+              <path d="M65 45c-6-8-2-22 8-20s10 14 2 22" stroke-width="1.2"/>
+              <path d="M65 47c6-6 16-4 16 4s-8 14-18 10" stroke-width="1.2"/>
+              <path d="M63 51c-8-2-14-12-8-18s14 0 16 10" stroke-width="1.2"/>
+              <path d="M70 38c2-6 10-10 14-4s-2 12-8 14" stroke-width="1.1"/>
+              <path d="M55 42c-4-4-4-14 2-16s10 4 10 12" stroke-width="1.1"/>
+              <!-- Cross-hatch shading on petals -->
+              <path d="M62 40c2 2 4 6 4 10" stroke-width="0.4" opacity="0.5"/>
+              <path d="M64 38c1 3 2 7 1 12" stroke-width="0.4" opacity="0.4"/>
+              <path d="M68 42c-1 2-2 6-3 9" stroke-width="0.4" opacity="0.5"/>
+              <path d="M72 44c-2 1-4 4-5 8" stroke-width="0.4" opacity="0.4"/>
+              <path d="M58 44c1 2 3 5 3 8" stroke-width="0.4" opacity="0.4"/>
+              <path d="M56 48c2 0 4 2 5 5" stroke-width="0.3" opacity="0.35"/>
+              <path d="M74 48c-2 0-4 2-5 5" stroke-width="0.3" opacity="0.35"/>
+              <!-- Outer petals -->
+              <path d="M50 55c-6-8-4-20 4-22s14 6 12 16" stroke-width="1"/>
+              <path d="M80 55c6-8 4-20-4-22s-14 6-12 16" stroke-width="1"/>
+              <path d="M48 60c-8 2-16-6-14-14s12-10 18-4" stroke-width="0.9"/>
+              <path d="M82 60c8 2 16-6 14-14s-12-10-18-4" stroke-width="0.9"/>
+              <!-- More cross-hatching on outer petals -->
+              <path d="M52 50c-2-2-3-6-2-10" stroke-width="0.35" opacity="0.3"/>
+              <path d="M54 48c-1-3-1-7 0-10" stroke-width="0.35" opacity="0.3"/>
+              <path d="M78 50c2-2 3-6 2-10" stroke-width="0.35" opacity="0.3"/>
+              <path d="M76 48c1-3 1-7 0-10" stroke-width="0.35" opacity="0.3"/>
+
+              <!-- Stem -->
+              <path d="M66 65c0 12-2 24 0 36s-2 20 0 30c2 14-2 28-2 42s2 24 0 36c-1 14 1 24 0 34s1 16 0 24" stroke-width="1.4"/>
+              <!-- Stem texture lines -->
+              <path d="M64 80c1-2 3-4 4-2" stroke-width="0.5" opacity="0.3"/>
+              <path d="M67 120c-1-2-3-3-4-1" stroke-width="0.5" opacity="0.3"/>
+              <path d="M65 160c1-2 3-3 4-1" stroke-width="0.5" opacity="0.3"/>
+              <path d="M66 200c-1-2-3-3-3-1" stroke-width="0.5" opacity="0.3"/>
+              <!-- Thorns -->
+              <path d="M68 95l6-6" stroke-width="1"/>
+              <path d="M64 145l-5-7" stroke-width="1"/>
+              <path d="M67 195l6-5" stroke-width="1"/>
+              <path d="M64 245l-5-6" stroke-width="1"/>
+
+              <!-- Leaf 1 (right) -->
+              <path d="M66 100c14-10 28-6 26 8s-18 16-28 6" stroke-width="1.1"/>
+              <!-- Leaf veins -->
+              <path d="M68 100c10-2 18 1 22 6" stroke-width="0.5" opacity="0.4"/>
+              <path d="M72 102c4 0 8 2 10 5" stroke-width="0.4" opacity="0.3"/>
+              <path d="M76 104c2 1 5 3 6 5" stroke-width="0.4" opacity="0.25"/>
+              <path d="M70 106c3 1 6 3 8 5" stroke-width="0.35" opacity="0.2"/>
+              <!-- Leaf hatching -->
+              <path d="M74 98c1 3 1 6-1 9" stroke-width="0.3" opacity="0.2"/>
+              <path d="M80 100c0 3-1 6-3 8" stroke-width="0.3" opacity="0.2"/>
+              <path d="M86 104c-1 2-3 4-5 5" stroke-width="0.3" opacity="0.2"/>
+
+              <!-- Leaf 2 (left) -->
+              <path d="M64 165c-12-8-26-2-24 10s16 14 26 4" stroke-width="1.1"/>
+              <path d="M62 165c-10 0-18 4-20 10" stroke-width="0.5" opacity="0.4"/>
+              <path d="M58 167c-4 1-8 4-10 7" stroke-width="0.4" opacity="0.3"/>
+              <path d="M54 170c-3 2-6 4-7 7" stroke-width="0.35" opacity="0.25"/>
+
+              <!-- Leaf 3 (right) -->
+              <path d="M66 230c12-10 24-6 22 6s-14 14-24 6" stroke-width="1.1"/>
+              <path d="M68 230c8-2 16 0 18 6" stroke-width="0.5" opacity="0.4"/>
+              <path d="M72 232c4 0 8 2 10 5" stroke-width="0.4" opacity="0.3"/>
+
+              <!-- Leaf 4 (left) -->
+              <path d="M64 290c-10-6-22 0-20 10s14 10 22 2" stroke-width="1"/>
+              <path d="M62 290c-8 1-14 5-14 10" stroke-width="0.45" opacity="0.35"/>
+
+              <!-- Small buds near top -->
+              <path d="M50 70c-2-4 0-8 3-8s4 4 2 8" stroke-width="0.8" opacity="0.6"/>
+              <path d="M82 68c2-3 0-7-2-7s-4 3-2 7" stroke-width="0.8" opacity="0.6"/>
+            </g>
+          </svg>
+        </div>
+
+        <!-- ===== DETAILED SVG: HANGING STARS (top) ===== -->
+        <div class="letter-illust stars-top" style="left:40px;top:-5px;width:140px;height:55px">
+          <svg viewBox="0 0 140 55" fill="none" stroke="#5a4a38" stroke-linecap="round" opacity="0.3">
+            <!-- String 1 + star -->
+            <path d="M20 0c0.5 1 0 4 0.5 8s-0.5 4 0 8c0.3 3-0.3 5 0 8" stroke-width="0.6" stroke-dasharray="2 2.5"/>
+            <path d="M16 26l4 6 4-6-5 2z" fill="#5a4a38" stroke="none" opacity="0.6"/>
+            <path d="M20 26l1 2m-2 0l2-1m-1-1l0 3" stroke-width="0.3" opacity="0.3"/>
+            <!-- String 2 + star (longer) -->
+            <path d="M60 0c-0.3 2 0.3 5-0.2 10s0.4 6-0.2 12c0.3 4-0.3 6 0 10" stroke-width="0.6" stroke-dasharray="2 2.5"/>
+            <path d="M55 34l5 8 5-8-7 3z" fill="#5a4a38" stroke="none" opacity="0.6"/>
+            <path d="M60 34l1.5 3m-3 0l3-1.5m-1.5-1.5l0 5" stroke-width="0.3" opacity="0.3"/>
+            <!-- String 3 + small star -->
+            <path d="M100 0c0.2 1.5-0.2 3 0.2 5s-0.3 3 0 5" stroke-width="0.5" stroke-dasharray="1.5 2"/>
+            <path d="M97 12l3 4 3-4-4 1.5z" fill="#5a4a38" stroke="none" opacity="0.5"/>
+            <!-- Tiny dots -->
+            <circle cx="120" cy="8" r="1" fill="#5a4a38" opacity="0.3"/>
+            <circle cx="125" cy="14" r="0.8" fill="#5a4a38" opacity="0.2"/>
+            <circle cx="130" cy="6" r="0.6" fill="#5a4a38" opacity="0.25"/>
+          </svg>
+        </div>
+
+        <!-- ===== DETAILED SVG: MOON (top right) ===== -->
+        <div class="letter-illust" style="right:40px;top:15px;width:36px;height:36px">
+          <svg viewBox="0 0 36 36" fill="none" stroke="#5a4a38" stroke-linecap="round" opacity="0.28">
+            <path d="M24 6a12 12 0 01-8 22 12 12 0 008-22z" stroke-width="1.1"/>
+            <!-- Crater marks -->
+            <circle cx="20" cy="14" r="1.5" stroke-width="0.5" opacity="0.3"/>
+            <circle cx="17" cy="20" r="1" stroke-width="0.4" opacity="0.25"/>
+            <circle cx="22" cy="22" r="0.8" stroke-width="0.4" opacity="0.2"/>
+            <!-- Shading lines -->
+            <path d="M18 10c1 1 2 3 1 5" stroke-width="0.3" opacity="0.2"/>
+            <path d="M20 16c0 2-1 4-2 5" stroke-width="0.3" opacity="0.2"/>
+          </svg>
+        </div>
+
+        <!-- ===== DETAILED SVG: HEARTS (scattered) ===== -->
+        <div class="letter-illust" style="right:30px;top:35%;width:50px;height:45px">
+          <svg viewBox="0 0 50 45" fill="none" stroke="#5a4a38" stroke-linecap="round" opacity="0.22">
+            <path d="M15 18c-2-7 5-11 9-7s2 9-1 14c-3-5-6-11-1-14s11 0 9 7" stroke-width="1.1"/>
+            <path d="M15 14c1 2 2 5 3 8" stroke-width="0.4" opacity="0.4"/>
+            <path d="M25 14c-1 2-2 5-3 8" stroke-width="0.4" opacity="0.4"/>
+            <path d="M38 8c-1-4 3-6 5-4s1 5-.5 7.5c-1.5-2.5-3-6-.5-7.5s6 0 5 4" stroke-width="0.9"/>
+          </svg>
+        </div>
+
+        <!-- ===== DETAILED SVG: ENVELOPE (bottom left) ===== -->
+        <div class="letter-illust envelope-bl" style="left:30px;bottom:30px;width:80px;height:62px">
+          <svg viewBox="0 0 80 62" fill="none" stroke="#5a4a38" stroke-linecap="round" stroke-linejoin="round" opacity="0.25">
+            <rect x="5" y="12" width="62" height="40" rx="2" stroke-width="1.1"/>
+            <path d="M5 12l31 22 31-22" stroke-width="1.1"/>
+            <path d="M5 52l22-16" stroke-width="0.8"/>
+            <path d="M67 52l-22-16" stroke-width="0.8"/>
+            <!-- Envelope texture -->
+            <path d="M15 20l8 5" stroke-width="0.35" opacity="0.2"/>
+            <path d="M57 20l-8 5" stroke-width="0.35" opacity="0.2"/>
+            <!-- Heart seal -->
+            <path d="M33 30c-1-3 2-5 4-3s1 4-.5 6c-1.5-2-2.5-5-.5-6s5 0 4 3" fill="#5a4a38" opacity="0.35" stroke="none"/>
+            <!-- Small hearts next to envelope -->
+            <path d="M72 8c-.6-1.8 1.2-3 2.4-1.8s.6 2.4-.3 3.6c-.9-1.2-1.5-3-.3-3.6s3 0 2.4 1.8" fill="#5a4a38" opacity="0.2" stroke="none"/>
+            <path d="M70 50c-.5-1.5 1-2.5 2-1.5s.5 2-.3 3c-.7-1-1.2-2.5-.3-3s2.5 0 2 1.5" fill="#5a4a38" opacity="0.15" stroke="none"/>
+          </svg>
+        </div>
+
+        <!-- ===== DETAILED SVG: BOTTOM HEARTS ===== -->
+        <div class="letter-illust" style="right:25px;bottom:20px;width:70px;height:35px">
+          <svg viewBox="0 0 70 35" fill="#5a4a38" stroke="none" opacity="0.15">
+            <path d="M15 18c-2-6 4-10 8-6s2 8-1 12c-3-4-5-10-1-12s10 0 8 6"/>
+            <path d="M45 14c-1.2-3.5 2.5-5.5 5-3.5s1.2 5-.6 7.5c-1.8-2.5-3-5.5-.6-7.5s6.2 0 5 3.5"/>
+            <path d="M60 24c-.6-1.8 1.2-2.8 2.5-1.8s.6 2.5-.3 3.8c-.9-1.3-1.5-2.8-.3-3.8s3.1 0 2.5 1.8"/>
+          </svg>
+        </div>
+
+        <!-- ===== SVG: "You mean everything to me" note ===== -->
+        <div class="letter-illust" style="right:15px;bottom:70px;width:90px;text-align:right">
+          <span style="font-size:13px;color:rgba(90,74,56,0.3);font-family:'Snell Roundhand',cursive;transform:rotate(-4deg);display:inline-block">
+            You mean<br>everything<br>to me. ♡
+          </span>
+        </div>
+
+        <!-- ===== LETTER TEXT ===== -->
+        <div class="letter-content">
+          <div class="letter-label">A letter of love</div>
+          <div class="letter-title">Dearest Anci, ♡</div>
+          <div class="letter-body">
+            <p>You might expect me to reach here for something dreamed up, something golden and soft. And I could. But I would rather give you something truer than any dream. I want to write of what is real. I want, even, to write of the hard days.</p>
+            <p>Why would a man put hardship in a love letter?</p>
+            <p>Because I have noticed something, and it has never once failed me. The hours in which I have loved you most were never the hours after a perfect evening. They were the hours after the hard one.</p>
+            <p>Strange as it sounds, it is the hardship that has made us. Every trouble we have ever met, we met as one, and from every one of them we came away loving each other more. This past month, the longest and cruellest we have ever been apart, should by all reason have worn our love thin. Instead we grew closer than we have ever been. We fell further into love than I believed a heart could fall.</p>
+            <p>Why? Is it only that we tried? Or is it that you and I were made to weather the storm, and that each time we do, we are shown once more that we belong wholly to each other?</p>
+            <p>I believe it is the second. And it is for this, above all, that I chose you. I understood long ago what love truly is. It is not the romance of the beautiful moment alone. It is romance in the plain light of the real, the very force that binds two souls to one road, one destiny, because their hearts have chosen to walk it together.</p>
+            <p>This is the love I mean, Anci. This is the love I carry for you. A love that endures the storm as faithfully as it endures the sun. A love so pure, so lovely, that it brings tears to the eye.</p>
+          </div>
+          <div class="letter-sign">
+            <span class="love">Anci, I love you. ❤️</span>
+            <span class="bunny">My beloved bunny. ♡</span>
+            <span class="from-line">Your Bulgarian — Dobri</span>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Image: bouquet -->
-  <div class="img-section tilt-left blend reveal">
-    <img src="photos/img3.jpg" alt="">
-  </div>
+  <div class="img-section tilt-left blend reveal"><img src="photos/img3.jpg" alt=""></div>
 
-  <div class="sep reveal">
-    <svg width="130" height="40" viewBox="0 0 130 40" fill="none" stroke="#8a7a68" stroke-width="1.2" stroke-linecap="round">
-      <path d="M25 35c-2.5-3.5-14-12-14-21a8.5 8.5 0 0114-7 8.5 8.5 0 0114 7c0 9-11.5 17.5-14 21z"/>
-      <path d="M65 32c-2-3-11-10-11-17a7 7 0 0111-5.5 7 7 0 0111 5.5c0 7-9 14-11 17z"/>
-      <path d="M105 35c-2.5-3.5-14-12-14-21a8.5 8.5 0 0114-7 8.5 8.5 0 0114 7c0 9-11.5 17.5-14 21z"/>
-    </svg>
-  </div>
+  <div class="sep reveal"><svg width="130" height="40" viewBox="0 0 130 40" fill="none" stroke="#8a7a68" stroke-width="1.2" stroke-linecap="round"><path d="M25 35c-2.5-3.5-14-12-14-21a8.5 8.5 0 0114-7 8.5 8.5 0 0114 7c0 9-11.5 17.5-14 21z"/><path d="M65 32c-2-3-11-10-11-17a7 7 0 0111-5.5 7 7 0 0111 5.5c0 7-9 14-11 17z"/><path d="M105 35c-2.5-3.5-14-12-14-21a8.5 8.5 0 0114-7 8.5 8.5 0 0114 7c0 9-11.5 17.5-14 21z"/></svg></div>
 
-  <!-- MOMENTS -->
-  <div class="moment-card reveal">
-    <div class="text">"Every single day she brought light to me."</div>
-    <div class="who">— from my journal</div>
-  </div>
+  <div class="moment-card reveal"><div class="text">"Every single day she brought light to me."</div><div class="who">— from my journal</div></div>
+  <div class="moment-card reveal"><div class="text">"I've never been happier in my entire life. I've never felt more loved. I've never felt more taken care of."</div><div class="who">— from my journal</div></div>
 
-  <div class="moment-card reveal">
-    <div class="text">"I've never been happier in my entire life. I've never felt more loved. I've never felt more taken care of."</div>
-    <div class="who">— from my journal</div>
-  </div>
+  <div class="img-section tilt-right blend reveal"><img src="photos/img4.jpg" alt=""></div>
 
-  <!-- Image: Anci resting -->
-  <div class="img-section tilt-right blend reveal">
-    <img src="photos/img4.jpg" alt="">
-  </div>
+  <div class="moment-card reveal"><div class="text">"My love for you hasn't moved, and neither has my commitment. I'm still here, I still want this, and I'll fight for it, because I love you."</div><div class="who">— from my journal</div></div>
+  <div class="moment-card reveal"><div class="text">"Every single day, I wake up, I work my ass off, and I route every single decision through the lens of whether this allows me to be with Anci or not."</div><div class="who">— from my journal</div></div>
 
-  <div class="moment-card reveal">
-    <div class="text">"My love for you hasn't moved, and neither has my commitment. I'm still here, I still want this, and I'll fight for it, because I love you."</div>
-    <div class="who">— from my journal</div>
-  </div>
+  <div class="img-section blend reveal"><img src="photos/img6.jpg" alt=""></div>
 
-  <div class="moment-card reveal">
-    <div class="text">"Every single day, I wake up, I work my ass off, and I route every single decision through the lens of whether this allows me to be with Anci or not."</div>
-    <div class="who">— from my journal</div>
-  </div>
+  <div class="sep reveal"><svg width="50" height="45" viewBox="0 0 50 45" fill="none" stroke="#8a7a68" stroke-width="1.3" stroke-linecap="round"><path d="M25 40c-3-4-16-14-16-24a10 10 0 0116-8 10 10 0 0116 8c0 10-13 20-16 24z"/><path d="M25 16c1.5 5 1.5 12 0 18" opacity="0.25"/><path d="M16 18c2 1 4 4 5 7" stroke-width="0.5" opacity="0.15"/><path d="M34 18c-2 1-4 4-5 7" stroke-width="0.5" opacity="0.15"/></svg></div>
 
-  <!-- Image: kiss at sunset -->
-  <div class="img-section blend reveal">
-    <img src="photos/img6.jpg" alt="">
-  </div>
+  <div class="moment-card reveal"><div class="text">"You made me feel something no one else could. That's why I love you so much. It was always mutual because my love only came from you."</div><div class="who">— from my journal</div></div>
+  <div class="moment-card reveal"><div class="text">"Your reassurance really means a lot to me. More than you know."</div><div class="who">— Anci</div></div>
+  <div class="moment-card reveal"><div class="text">"I love you. So so much. So much…"</div><div class="who">— Anci</div></div>
 
-  <div class="sep reveal">
-    <svg width="50" height="45" viewBox="0 0 50 45" fill="none" stroke="#8a7a68" stroke-width="1.3" stroke-linecap="round"><path d="M25 40c-3-4-16-14-16-24a10 10 0 0116-8 10 10 0 0116 8c0 10-13 20-16 24z"/><path d="M25 16c1.5 5 1.5 12 0 18" opacity="0.25"/></svg>
-  </div>
+  <div class="img-section tilt-slight blend reveal"><img src="photos/img7.jpg" alt=""></div>
 
-  <div class="moment-card reveal">
-    <div class="text">"You made me feel something no one else could. That's why I love you so much. It was always mutual because my love only came from you."</div>
-    <div class="who">— from my journal</div>
-  </div>
+  <div class="sep reveal"><svg width="50" height="45" viewBox="0 0 50 45" fill="none" stroke="#8a7a68" stroke-width="1.3" stroke-linecap="round"><path d="M25 40c-3-4-16-14-16-24a10 10 0 0116-8 10 10 0 0116 8c0 10-13 20-16 24z"/><path d="M25 16c1.5 5 1.5 12 0 18" opacity="0.25"/></svg></div>
 
-  <div class="moment-card reveal">
-    <div class="text">"Your reassurance really means a lot to me. More than you know."</div>
-    <div class="who">— Anci</div>
-  </div>
-
-  <div class="moment-card reveal">
-    <div class="text">"I love you. So so much. So much…"</div>
-    <div class="who">— Anci</div>
-  </div>
-
-  <!-- Image: mirror selfie -->
-  <div class="img-section tilt-slight blend reveal">
-    <img src="photos/img7.jpg" alt="">
-  </div>
-
-  <div class="sep reveal">
-    <svg width="50" height="45" viewBox="0 0 50 45" fill="none" stroke="#8a7a68" stroke-width="1.3" stroke-linecap="round"><path d="M25 40c-3-4-16-14-16-24a10 10 0 0116-8 10 10 0 0116 8c0 10-13 20-16 24z"/><path d="M25 16c1.5 5 1.5 12 0 18" opacity="0.25"/></svg>
-  </div>
-
-  <!-- ANCI'S MESSAGE -->
   <div class="anci-section reveal">
     <div class="anci-label">What you wrote to me</div>
     <div class="anci-body">
@@ -347,12 +459,8 @@ body{
     </div>
   </div>
 
-  <!-- Image: Dobri with rose (colored) -->
-  <div class="img-section tilt-right reveal">
-    <img src="photos/img2.jpg" alt="">
-  </div>
+  <div class="img-section tilt-right reveal"><img src="photos/img2.jpg" alt=""></div>
 
-  <!-- FINAL -->
   <div class="final reveal">
     <div class="big">Anci, I love you.</div>
     <div class="sub-line">More than this entire page can ever express.</div>
@@ -360,7 +468,6 @@ body{
     <div class="sign">My beloved bunny. ♡</div>
     <div class="date">七夕节 · Qixi Festival · August 19, 2026</div>
   </div>
-
 </div>
 
 <script>
@@ -385,13 +492,11 @@ body{
   resize();for(var i=0;i<30;i++){var p=make();p.y=Math.random()*H;ps.push(p)}
   addEventListener('resize',resize);draw()
 })();
-
 // MUSIC
 (function(){var m=document.getElementById('bgMusic'),p=document.getElementById('heroPrompt'),s=false;
   document.getElementById('hero').addEventListener('click',function(){if(s)return;s=true;
     m.volume=0.3;m.play().catch(function(){});p.textContent='scroll down ↓';p.classList.add('started')})
 })();
-
 // SCROLL QUOTES
 (function(){var stage=document.getElementById('quotesStage'),qs=stage.querySelectorAll('.quote-item'),n=qs.length;
   var sp=document.createElement('div');sp.style.height=(n*1.8*100)+'vh';sp.style.position='relative';
@@ -406,15 +511,13 @@ body{
       else{var t2=(p-he)/(e-he);t2*=t2;q.style.opacity=1-t2;q.style.transform='translate(-50%,-50%) scale('+(1+0.3*t2)+')'}}}
   addEventListener('scroll',function(){requestAnimationFrame(upd)},{passive:true});upd()
 })();
-
 // LETTER PARALLAX
-(function(){var lc=document.getElementById('letterCard');
+(function(){var lc=document.getElementById('letterCard');if(!lc)return;
   document.addEventListener('mousemove',function(e){
     var x=(e.clientX/innerWidth-0.5)*5,y=(e.clientY/innerHeight-0.5)*4;
     lc.style.transform='rotateX('+(3-y)+'deg) rotateY('+(-1.5+x)+'deg) rotateZ(0.3deg)';
   });
 })();
-
 // REVEAL
 (function(){var obs=new IntersectionObserver(function(es){
     es.forEach(function(e){if(e.isIntersecting)e.target.classList.add('visible')});
